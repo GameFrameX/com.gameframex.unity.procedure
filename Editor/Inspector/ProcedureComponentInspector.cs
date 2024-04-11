@@ -15,7 +15,7 @@ using UnityEngine;
 namespace GameFrameX.Procedure.Editor
 {
     [CustomEditor(typeof(ProcedureComponent))]
-    internal sealed class ProcedureComponentInspector : GameFrameworkInspector
+    internal sealed class ProcedureComponentInspector : ComponentTypeComponentInspector
     {
         private SerializedProperty m_AvailableProcedureTypeNames = null;
         private SerializedProperty m_EntranceProcedureTypeName = null;
@@ -100,18 +100,23 @@ namespace GameFrameX.Procedure.Editor
         {
             base.OnCompileComplete();
 
-            RefreshTypeNames();
+            _RefreshTypeNames();
         }
 
-        private void OnEnable()
+        protected override void Enable()
         {
             m_AvailableProcedureTypeNames = serializedObject.FindProperty("m_AvailableProcedureTypeNames");
             m_EntranceProcedureTypeName = serializedObject.FindProperty("m_EntranceProcedureTypeName");
 
-            RefreshTypeNames();
+            _RefreshTypeNames();
         }
 
-        private void RefreshTypeNames()
+        protected override void RefreshTypeNames()
+        {
+            RefreshComponentTypeNames(typeof(IProcedureManager));
+        }
+
+        private void _RefreshTypeNames()
         {
             m_ProcedureTypeNames = Type.GetRuntimeTypeNames(typeof(ProcedureBase));
             ReadAvailableProcedureTypeNames();
