@@ -1,5 +1,5 @@
 {
-  "name": "com.alianblank.gameframex.unity.procedure",
+  "name": "com.gameframex.unity.procedure",
   "displayName": "Game Frame X Procedure",
   "category": "Game Framework X",
   "description": "Game Frame X Procedure Component",
@@ -9,8 +9,8 @@
     "Game Framework X"
   ],
   "repository": {
-    "name": "com.alianblank.gameframex.unity.procedure",
-    "url": "https://github.com/AlianBlank/com.alianblank.gameframex.unity.procedure.git",
+    "name": "com.gameframex.unity.procedure",
+    "url": "https://github.com/AlianBlank/com.gameframex.unity.procedure.git",
     "type": "git"
   },
   "author": {
@@ -18,7 +18,5 @@
     "email": "alianblank@outlook.com",
     "url": "https://alianblank.com/"
   },
-  "dependencies": {
-    "com.alianblank.gameframex.unity.fsm": "1.0.0"
-  }
+  "dependencies": {}
 }
