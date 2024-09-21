@@ -57,7 +57,7 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         protected override void Awake()
         {
-            ImplementationComponentType = Type.GetType(componentType);
+            ImplementationComponentType = Utility.Assembly.GetType(componentType);
             InterfaceComponentType = typeof(IProcedureManager);
             base.Awake();
             m_ProcedureManager = GameFrameworkEntry.GetModule<IProcedureManager>();
