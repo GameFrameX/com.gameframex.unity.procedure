@@ -45,6 +45,17 @@ namespace GameFrameX.Procedure.Runtime
         }
 
         /// <summary>
+        /// 状态轮询时调用。
+        /// </summary>
+        /// <param name="procedureOwner">流程持有者。</param>
+        /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
+        /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
+        protected override void OnFixedUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds, float realElapseSeconds)
+        {
+            base.OnFixedUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
+        }
+
+        /// <summary>
         /// 离开状态时调用。
         /// </summary>
         /// <param name="procedureOwner">流程持有者。</param>
