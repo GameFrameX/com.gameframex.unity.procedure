@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.0.4...1.1.0) (2025-12-23)
+
+
+### Features
+
+* **ci:** change ci ([434b3ac](https://github.com/gameframex/com.gameframex.unity.procedure/commit/434b3ac9a89a326f2f395873e48fad7c3af4848b))
+
 # Changelog
 
 ## [1.0.3](https://github.com/GameFrameX/com.gameframex.unity.procedure/tree/1.0.3) (2025-06-01)
