@@ -44,7 +44,7 @@ namespace GameFrameX.Procedure.Editor
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
                 GUILayout.Label("Available Procedures", EditorStyles.boldLabel);
-                if (m_ProcedureTypeNames.Length > 0)
+                if (m_ProcedureTypeNames != null && m_ProcedureTypeNames.Length > 0)
                 {
                     EditorGUILayout.BeginVertical("box");
                     {
@@ -118,7 +118,7 @@ namespace GameFrameX.Procedure.Editor
 
         private void _RefreshTypeNames()
         {
-            m_ProcedureTypeNames = Type.GetRuntimeTypeNames(typeof(ProcedureBase));
+            m_ProcedureTypeNames = TypeHelper.GetRuntimeTypeNames(typeof(ProcedureBase));
             ReadAvailableProcedureTypeNames();
             int oldCount = m_CurrentAvailableProcedureTypeNames.Count;
             m_CurrentAvailableProcedureTypeNames = m_CurrentAvailableProcedureTypeNames.Where(x => m_ProcedureTypeNames.Contains(x)).ToList();
