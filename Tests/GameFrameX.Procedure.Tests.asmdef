@@ -2,7 +2,8 @@
     "name": "GameFrameX.Procedure.Tests",
     "references": [
         "GameFrameX.Procedure.Runtime",
-        "GameFrameX.FSM.Runtime"
+        "GameFrameX.FSM.Runtime",
+        "GameFrameX.Runtime"
     ],
     "rootNamespace": "GameFrameX.Procedure.Tests",
     "includePlatforms": [
