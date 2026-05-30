@@ -151,5 +151,24 @@ namespace GameFrameX.Procedure.Runtime
         {
             return m_ProcedureManager.GetProcedure(procedureType);
         }
+
+        /// <summary>
+        /// 销毁当前流程状态机，清空所有已注册的流程。
+        /// </summary>
+        public void DestroyProcedures()
+        {
+            m_ProcedureManager.DestroyProcedures();
+        }
+
+        /// <summary>
+        /// 销毁当前流程状态机，并使用新的流程重新初始化。
+        /// </summary>
+        /// <param name="procedures">新注册的流程。</param>
+        /// <param name="entranceProcedure">入口流程。</param>
+        public void ReinitializeProcedures(ProcedureBase[] procedures, ProcedureBase entranceProcedure)
+        {
+            m_ProcedureManager.ReinitializeProcedures(procedures);
+            m_EntranceProcedure = entranceProcedure;
+        }
     }
 }
