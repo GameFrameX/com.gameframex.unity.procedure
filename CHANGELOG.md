@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.2.0...1.2.1) (2026-05-30)
+
+
+### Bug Fixes
+
+* **test:** 修复单元测试编译错误 ([c691bfc](https://github.com/gameframex/com.gameframex.unity.procedure/commit/c691bfc431daa2cdcf34b0d544fdf5948327c222))
+
 # [1.2.0](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.1.1...1.2.0) (2026-05-30)
 
 

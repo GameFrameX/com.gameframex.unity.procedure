@@ -3,7 +3,7 @@
   "displayName": "Game Frame X Procedure",
   "category": "GameFrameX",
   "description": "GameFrameX Procedure — Unity FSM-based game flow management package. Drives game lifecycle stages (splash, preload, login, main menu, etc.) through swappable procedure states with full lifecycle callbacks (OnInit, OnEnter, OnUpdate, OnFixedUpdate, OnLeave, OnDestroy) and configurable entrance procedure via Inspector. Docs: https://gameframex.doc.alianblank.com\n\nGameFrameX Procedure — Unity 基于 FSM 的游戏流程管理功能包。通过可切换的过程状态驱动游戏生命周期阶段（闪屏、预加载、登录、主菜单等），提供完整生命周期回调（OnInit、OnEnter、OnUpdate、OnFixedUpdate、OnLeave、OnDestroy），并支持通过 Inspector 配置入口过程。文档：https://gameframex.doc.alianblank.com",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "unity": "2019.4",
   "keywords": [
     "GameFrameX",
