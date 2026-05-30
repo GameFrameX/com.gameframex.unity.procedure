@@ -70,6 +70,12 @@ namespace GameFrameX.Procedure.Runtime
 
         private IEnumerator Start()
         {
+            if (m_AvailableProcedureTypeNames == null || m_AvailableProcedureTypeNames.Length <= 0)
+            {
+                Log.Error("Available procedure type names is invalid.");
+                yield break;
+            }
+
             ProcedureBase[] procedures = new ProcedureBase[m_AvailableProcedureTypeNames.Length];
             for (int i = 0; i < m_AvailableProcedureTypeNames.Length; i++)
             {
