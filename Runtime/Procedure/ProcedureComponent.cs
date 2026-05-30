@@ -18,7 +18,7 @@ namespace GameFrameX.Procedure.Runtime
     /// 流程组件。
     /// </summary>
     [DisallowMultipleComponent]
-    [AddComponentMenu("Game Framework/Procedure")]
+    [AddComponentMenu("GameFrameX/Procedure")]
     public sealed class ProcedureComponent : GameFrameworkComponent
     {
         private IProcedureManager m_ProcedureManager = null;
