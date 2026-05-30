@@ -201,5 +201,39 @@ namespace GameFrameX.Procedure.Runtime
 
             return (ProcedureBase)m_ProcedureFsm.GetState(procedureType);
         }
+
+        /// <summary>
+        /// 销毁当前流程状态机，清空所有已注册的流程。
+        /// </summary>
+        public void DestroyProcedures()
+        {
+            if (m_FsmManager == null)
+            {
+                return;
+            }
+
+            if (m_ProcedureFsm != null)
+            {
+                m_FsmManager.DestroyFsm(m_ProcedureFsm);
+                m_ProcedureFsm = null;
+            }
+        }
+
+        /// <summary>
+        /// 销毁当前流程状态机，并使用新的流程重新初始化。
+        /// </summary>
+        /// <param name="procedures">新注册的流程。</param>
+        public void ReinitializeProcedures(params ProcedureBase[] procedures)
+        {
+            DestroyProcedures();
+
+            GameFrameworkGuard.NotNull(procedures, nameof(procedures));
+            if (procedures.Length <= 0)
+            {
+                throw new GameFrameworkException("Procedures is invalid.");
+            }
+
+            m_ProcedureFsm = m_FsmManager.CreateFsm(this, procedures);
+        }
     }
 }
