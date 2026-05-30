@@ -103,7 +103,12 @@ namespace GameFrameX.Procedure.Runtime
         /// <param name="procedures">流程管理器包含的流程。</param>
         public void Initialize(IFsmManager fsmManager, params ProcedureBase[] procedures)
         {
-            GameFrameworkGuard.NotNull(fsmManager,nameof(fsmManager));
+            GameFrameworkGuard.NotNull(fsmManager, nameof(fsmManager));
+            GameFrameworkGuard.NotNull(procedures, nameof(procedures));
+            if (procedures.Length <= 0)
+            {
+                throw new GameFrameworkException("Procedures is invalid.");
+            }
 
             m_FsmManager = fsmManager;
             m_ProcedureFsm = m_FsmManager.CreateFsm(this, procedures);
