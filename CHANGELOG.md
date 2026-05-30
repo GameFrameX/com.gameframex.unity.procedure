@@ -1,3 +1,22 @@
+# [1.2.0](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.1.1...1.2.0) (2026-05-30)
+
+
+### Bug Fixes
+
+* **procedure:** Inspector 中 m_ProcedureTypeNames null 防护及 TypeHelper 修正 ([a1974b8](https://github.com/gameframex/com.gameframex.unity.procedure/commit/a1974b8bb8dd7fcc49c1680bd5ea576ec7871a37))
+* **procedure:** 添加 ProcedureManager.Initialize 对 procedures 参数的校验 ([ac50077](https://github.com/gameframex/com.gameframex.unity.procedure/commit/ac500774869dab6660d049a74946878650dbd427))
+* **procedure:** 添加 Start 协程中 AvailableProcedureTypeNames 的 null 防护 ([f3350e0](https://github.com/gameframex/com.gameframex.unity.procedure/commit/f3350e02741d22fbe03440b8a907d340d9440fd5))
+
+
+### Features
+
+* **procedure:** 为 IProcedureManager 接口所有公开成员添加 [Preserve] 防裁剪标签 ([26c57d6](https://github.com/gameframex/com.gameframex.unity.procedure/commit/26c57d6e448ba21c849d4c1d4a96d3d7c939bec8))
+* **procedure:** 为 ProcedureComponent 所有公开成员添加 [Preserve] 防裁剪标签 ([4623151](https://github.com/gameframex/com.gameframex.unity.procedure/commit/46231516b1e7220e9189d7e85e979d245217a03d))
+* **procedure:** 为 ProcedureManager 所有公开成员添加 [Preserve] 防裁剪标签 ([b9a3bb9](https://github.com/gameframex/com.gameframex.unity.procedure/commit/b9a3bb90d8ea63934df859c4ac04b5c85ca6ac8b))
+* **procedure:** 在 IProcedureManager 接口新增 DestroyProcedures 和 ReinitializeProcedures ([a29e9f9](https://github.com/gameframex/com.gameframex.unity.procedure/commit/a29e9f952491ff2337c0646fae3499ffa57daaf0))
+* **procedure:** 在 ProcedureComponent 暴露 DestroyProcedures 和 ReinitializeProcedures ([e15b0c6](https://github.com/gameframex/com.gameframex.unity.procedure/commit/e15b0c6cf7573983050353ce7e992ae494f4219b))
+* **procedure:** 实现 ProcedureManager 的 DestroyProcedures 和 ReinitializeProcedures ([1162351](https://github.com/gameframex/com.gameframex.unity.procedure/commit/1162351ee917ba086e616e5d4ae2168bc1b60a82))
+
 ## [1.1.1](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.1.0...1.1.1) (2026-05-28)
 
 
