@@ -12,7 +12,6 @@
 
 [ドキュメント](https://gameframex.doc.alianblank.com) · [クイックスタート](#クイックスタート) · [QQグループ](https://qm.qq.com/q/5U9Fvebw) · [言語](#言語)
 
-
 </div>
 
 ---
@@ -25,61 +24,108 @@
 
 ## プロジェクト概要
 
-GameFrameX の Procedure フロー管理コンポーネント。
+FSM ベースの Unity ゲームフロー管理パッケージ。切り替え可能なプロシージャステートにより、ゲームライフサイクルステージ（スプラッシュ、プリロード、ログイン、メインメニューなど）を駆動します。
 
-**Procedure フロー管理コンポーネント (Procedure Component)** - フロー管理コンポーネント関連のインターフェースを提供します。
+## アーキテクチャ
 
-**このライブラリは主に `https://github.com/AlianBlank/GameFrameX.Unity` のサブライブラリとして使用されます。**
+```
+ProcedureComponent (MonoBehaviour)
+  └─ IProcedureManager (インターフェース)
+       └─ ProcedureManager (FSM を管理)
+            └─ ProcedureBase (抽象クラス、各プロシージャのロジック)
+```
 
-## 依存コンポーネント
+- **ProcedureComponent** — Unity コンポーネント。Inspector でプロシージャとエントランスプロシージャを登録し、`Start()` 時に自動起動します。
+- **ProcedureManager** — コアマネージャ。`IFsmManager` を介して内部 FSM を作成し、プロシージャの状態遷移を駆動します。
+- **ProcedureBase** — 抽象基底クラス。ライフサイクルコールバックを提供：`OnInit`、`OnEnter`、`OnUpdate`、`OnFixedUpdate`、`OnLeave`、`OnDestroy`。
 
-- 有限状態機械 (FSM)：https://github.com/AlianBlank/com.alianblank.gameframex.unity.fsm
+## 依存関係
+
+- [com.gameframex.unity.fsm](https://github.com/GameFrameX/com.gameframex.unity.fsm) — 有限状態機械
 
 ## クイックスタート
 
-### インストール（いずれかを選択）
+### インストール
 
-1. `manifest.json` の `dependencies` セクションに以下を追加します：
-   ```json
-   {"com.gameframex.unity.procedure": "https://github.com/AlianBlank/com.gameframex.unity.procedure.git"}
-   ```
+Unity プロジェクトの `Packages/manifest.json` を編集し、`scopedRegistries` セクションを追加してください：
 
-2. Unity の `Package Manager` で `Git URL` を使用して追加：https://github.com/AlianBlank/com.gameframex.unity.procedure.git
+```json
+{
+  "scopedRegistries": [
+    {
+      "name": "GameFrameX",
+      "url": "https://gameframex.upm.alianblank.uk",
+      "scopes": [
+        "com.gameframex"
+      ]
+    }
+  ]
+}
+```
 
-3. リポジトリを直接ダウンロードして、Unity プロジェクトの `Packages` ディレクトリに配置します。自動的に読み込まれます。
+次に `dependencies` に追加します：
+
+```json
+{
+  "dependencies": {
+    "com.gameframex.unity.procedure": "1.1.1"
+  }
+}
+```
+
+`scopes` は、どのパッケージをこのレジストリから解決するかを制御します。`com.gameframex` で始まるパッケージのみがこのレジストリから取得されます。
 
 ## 使用例
 
-### ProcedureComponent 概要
+### 1. プロシージャクラスの定義
 
-`ProcedureComponent` は、Unity と Game Framework ベースのゲームでゲームフローを管理するためのコンポーネントです。`FSMComponent`（有限状態機械コンポーネント）に依存し、ゲームの起動、メニュー、プレイ、一時停止、終了など、異なる段階や状態を管理します。
+```csharp
+public class ProcedurePreload : ProcedureBase
+{
+    protected internal override void OnEnter(IFsm<IProcedureManager> procedureOwner)
+    {
+        // アセット、設定などのロード
+    }
 
-### 機能
+    protected internal override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds, float realElapseSeconds)
+    {
+        // ロード進捗を確認し、完了したら次のプロシージャに切り替え
+        ChangeToState<ProcedureMain>(procedureOwner);
+    }
+}
 
-- プロシージャマネージャー (`IProcedureManager`) を初期化し、`GameFrameworkEntry` を通じて関連モジュールを登録・取得します。
-- ゲーム起動時にすべての利用可能なプロシージャ (`ProcedureBase` 型配列) を作成・初期化します。
-- ゲーム起動時、エントリプロシージャ (`m_EntranceProcedure`) に自動的に切り替えます。
-- 現在のプロシージャとその継続時間を照会・取得するメソッドを提供します。
+public class ProcedureMain : ProcedureBase
+{
+    protected internal override void OnEnter(IFsm<IProcedureManager> procedureOwner)
+    {
+        // メインメニューを表示
+    }
+}
+```
 
-### 依存関係
+### 2. Inspector で設定
 
-`ProcedureComponent` は以下のコンポーネントまたはモジュールが必要です：
+1. ゲームオブジェクトに `ProcedureComponent` を追加（`GameFrameX > Procedure`）。
+2. Inspector で利用可能なプロシージャにチェックを入れます。
+3. エントランスプロシージャを選択（例：`ProcedurePreload`）。
 
-- `FSMComponent`：プロシージャの有限状態機械ロジックの実装に使用。
-- `IProcedureManager`：Game Framework が提供する、ゲームのプロシージャ状態を管理するインターフェース。
-- `ProcedureBase`：カスタムプロシージャを拡張するための基底クラス。
+### 3. ランタイムプロシージャ管理
 
-### 設定
+```csharp
+// プロシージャの存在確認
+bool has = procedureComponent.HasProcedure<ProcedureMain>();
 
-Unity Inspector で以下のプロパティを設定できます：
+// プロシージャインスタンスの取得
+ProcedureMain main = procedureComponent.GetProcedure<ProcedureMain>();
 
-- `m_AvailableProcedureTypeNames`：利用可能なプロシージャの型名配列。ゲーム起動時にプロシージャを作成・初期化するために使用。
-- `m_EntranceProcedureTypeName`：ゲーム起動時に最初に入るプロシージャの型名。
+// 現在のプロシージャ情報の取得
+ProcedureBase current = procedureComponent.CurrentProcedure;
+float time = procedureComponent.CurrentProcedureTime;
 
-### パブリックメソッド
-
-- `HasProcedure<T>()`：指定された型のプロシージャが存在するか確認します。
-- `GetProcedure<T>()`：指定された型のプロシージャを取得します。
+// 全プロシージャを破棄し、新しいプロシージャで再初期化
+procedureComponent.DestroyProcedures();
+procedureComponent.ReinitializeProcedures(newProcedures, entranceProcedure);
+```
 
 ## 変更履歴
 
@@ -87,4 +133,4 @@ Unity Inspector で以下のプロパティを設定できます：
 
 ## ライセンス
 
-このプロジェクトは MIT ライセンスの下で公開されています。詳細は [LICENSE.md](LICENSE.md) ファイルをご覧ください。
+このプロジェクトは MIT ライセンスの下で公開されています - 詳細は [LICENSE.md](LICENSE.md) ファイルをご覧ください。

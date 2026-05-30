@@ -12,7 +12,6 @@
 
 [Documentation](https://gameframex.doc.alianblank.com) · [Quick Start](#quick-start) · [QQ Group](https://qm.qq.com/q/5U9Fvebw) · [Language](#language)
 
-
 </div>
 
 ---
@@ -25,61 +24,108 @@
 
 ## Project Overview
 
-GameFrameX Procedure Flow Management Component.
+FSM-based game flow management package for Unity. Drives game lifecycle stages (splash, preload, login, main menu, etc.) through swappable procedure states.
 
-**Procedure Flow Management Component (Procedure Component)** - Provides interfaces related to the procedure management component.
+## Architecture
 
-**This library primarily serves as a sub-library for `https://github.com/AlianBlank/GameFrameX.Unity`.**
+```
+ProcedureComponent (MonoBehaviour)
+  └─ IProcedureManager (interface)
+       └─ ProcedureManager (manages FSM)
+            └─ ProcedureBase (abstract, per-state logic)
+```
+
+- **ProcedureComponent** — Unity component, registers procedures and entrance procedure via Inspector, auto-starts on `Start()`.
+- **ProcedureManager** — Core manager, creates an internal FSM via `IFsmManager` to drive procedure state transitions.
+- **ProcedureBase** — Abstract base class with lifecycle callbacks: `OnInit`, `OnEnter`, `OnUpdate`, `OnFixedUpdate`, `OnLeave`, `OnDestroy`.
 
 ## Dependencies
 
-- Finite State Machine (FSM): https://github.com/AlianBlank/com.alianblank.gameframex.unity.fsm
+- [com.gameframex.unity.fsm](https://github.com/GameFrameX/com.gameframex.unity.fsm) — Finite State Machine
 
 ## Quick Start
 
-### Installation (choose one)
+### Installation
 
-1. Add the following to the `dependencies` section of `manifest.json`:
-   ```json
-   {"com.gameframex.unity.procedure": "https://github.com/AlianBlank/com.gameframex.unity.procedure.git"}
-   ```
+Edit your Unity project's `Packages/manifest.json` and add the `scopedRegistries` section:
 
-2. Add via Unity's `Package Manager` using `Git URL`: https://github.com/AlianBlank/com.gameframex.unity.procedure.git
+```json
+{
+  "scopedRegistries": [
+    {
+      "name": "GameFrameX",
+      "url": "https://gameframex.upm.alianblank.uk",
+      "scopes": [
+        "com.gameframex"
+      ]
+    }
+  ]
+}
+```
 
-3. Download the repository directly and place it in the Unity project's `Packages` directory. It will be auto-loaded.
+Then add the package to `dependencies`:
+
+```json
+{
+  "dependencies": {
+    "com.gameframex.unity.procedure": "1.1.1"
+  }
+}
+```
+
+`scopes` controls which packages are resolved through this registry. Only packages whose names start with `com.gameframex` will be fetched from it.
 
 ## Usage Examples
 
-### ProcedureComponent Overview
+### 1. Define Procedure Classes
 
-`ProcedureComponent` is a component for managing game procedures in Unity and Game Framework-based games. It depends on `FSMComponent` (Finite State Machine Component) to manage different stages or states in the game, such as startup, menu, gameplay, pause, and ending.
+```csharp
+public class ProcedurePreload : ProcedureBase
+{
+    protected internal override void OnEnter(IFsm<IProcedureManager> procedureOwner)
+    {
+        // Load assets, configs, etc.
+    }
 
-### Features
+    protected internal override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds, float realElapseSeconds)
+    {
+        // Check loading progress, switch to next procedure when done
+        ChangeToState<ProcedureMain>(procedureOwner);
+    }
+}
 
-- Initializes the procedure manager (`IProcedureManager`), registers and retrieves related modules through `GameFrameworkEntry`.
-- Creates and initializes all available procedures (`ProcedureBase` type array) when the game starts.
-- Automatically switches to the entrance procedure (`m_EntranceProcedure`) when the game starts.
-- Provides methods to query and get the current procedure and its duration.
+public class ProcedureMain : ProcedureBase
+{
+    protected internal override void OnEnter(IFsm<IProcedureManager> procedureOwner)
+    {
+        // Show main menu
+    }
+}
+```
 
-### Dependencies
+### 2. Configure via Inspector
 
-`ProcedureComponent` requires the following components or modules:
+1. Add `ProcedureComponent` to your game object (via `GameFrameX > Procedure`).
+2. In the Inspector, check the available procedures.
+3. Select the entrance procedure (e.g., `ProcedurePreload`).
 
-- `FSMComponent`: Used to implement the finite state machine logic for procedures.
-- `IProcedureManager`: An interface provided by Game Framework to manage game procedure states.
-- `ProcedureBase`: A base class for extending custom procedures.
+### 3. Runtime Procedure Management
 
-### Configuration
+```csharp
+// Check if a procedure exists
+bool has = procedureComponent.HasProcedure<ProcedureMain>();
 
-In the Unity Inspector, you can set the following properties:
+// Get a procedure instance
+ProcedureMain main = procedureComponent.GetProcedure<ProcedureMain>();
 
-- `m_AvailableProcedureTypeNames`: Array of available procedure type names, used to create and initialize procedures when the game starts.
-- `m_EntranceProcedureTypeName`: The type name of the procedure to enter first when the game starts.
+// Get current procedure info
+ProcedureBase current = procedureComponent.CurrentProcedure;
+float time = procedureComponent.CurrentProcedureTime;
 
-### Public Methods
-
-- `HasProcedure<T>()`: Checks if a procedure of the specified type exists.
-- `GetProcedure<T>()`: Gets the procedure of the specified type.
+// Destroy all procedures and reinitialize with new ones
+procedureComponent.DestroyProcedures();
+procedureComponent.ReinitializeProcedures(newProcedures, entranceProcedure);
+```
 
 ## Changelog
 

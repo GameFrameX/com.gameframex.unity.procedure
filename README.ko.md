@@ -12,7 +12,6 @@
 
 [문서](https://gameframex.doc.alianblank.com) · [빠른 시작](#빠른-시작) · [QQ 그룹](https://qm.qq.com/q/5U9Fvebw) · [언어](#언어)
 
-
 </div>
 
 ---
@@ -25,61 +24,108 @@
 
 ## 프로젝트 개요
 
-GameFrameX의 Procedure 흐름 관리 컴포넌트.
+FSM 기반 Unity 게임 흐름 관리 패키지. 전환 가능한 프로시저 상태를 통해 게임 라이프사이클 단계(스플래시, 프리로드, 로그인, 메인 메뉴 등)를 구동합니다.
 
-**Procedure 흐름 관리 컴포넌트 (Procedure Component)** - 흐름 관리 컴포넌트 관련 인터페이스를 제공합니다.
+## 아키텍처
 
-**이 라이브러리는 주로 `https://github.com/AlianBlank/GameFrameX.Unity`의 하위 라이브러리로 사용됩니다.**
+```
+ProcedureComponent (MonoBehaviour)
+  └─ IProcedureManager (인터페이스)
+       └─ ProcedureManager (FSM 관리)
+            └─ ProcedureBase (추상 클래스, 각 프로시저의 로직)
+```
 
-## 종속 컴포넌트
+- **ProcedureComponent** — Unity 컴포넌트. Inspector로 프로시저와 진입 프로시저를 등록하고, `Start()` 시 자동 시작합니다.
+- **ProcedureManager** — 핵심 관리자. `IFsmManager`를 통해 내부 FSM을 생성하여 프로시저 상태 전환을 구동합니다.
+- **ProcedureBase** — 추상 기반 클래스. 라이프사이클 콜백 제공: `OnInit`, `OnEnter`, `OnUpdate`, `OnFixedUpdate`, `OnLeave`, `OnDestroy`.
 
-- 유한 상태 기계 (FSM): https://github.com/AlianBlank/com.alianblank.gameframex.unity.fsm
+## 의존성
+
+- [com.gameframex.unity.fsm](https://github.com/GameFrameX/com.gameframex.unity.fsm) — 유한 상태 기계
 
 ## 빠른 시작
 
-### 설치 (선택)
+### 설치
 
-1. `manifest.json` 파일의 `dependencies` 섹션에 다음 내용을 추가합니다:
-   ```json
-   {"com.gameframex.unity.procedure": "https://github.com/AlianBlank/com.gameframex.unity.procedure.git"}
-   ```
+Unity 프로젝트의 `Packages/manifest.json`을 편집하여 `scopedRegistries` 섹션을 추가하세요:
 
-2. Unity의 `Package Manager`에서 `Git URL`을 사용하여 추가: https://github.com/AlianBlank/com.gameframex.unity.procedure.git
+```json
+{
+  "scopedRegistries": [
+    {
+      "name": "GameFrameX",
+      "url": "https://gameframex.upm.alianblank.uk",
+      "scopes": [
+        "com.gameframex"
+      ]
+    }
+  ]
+}
+```
 
-3. 저장소를 직접 다운로드하여 Unity 프로젝트의 `Packages` 디렉토리에 배치합니다. 자동으로 로드됩니다.
+그런 다음 `dependencies`에 추가합니다:
+
+```json
+{
+  "dependencies": {
+    "com.gameframex.unity.procedure": "1.1.1"
+  }
+}
+```
+
+`scopes`는 이 레지스트리를 통해 어떤 패키지를 해석할지 제어합니다. `com.gameframex`로 시작하는 패키지만 이 레지스트리에서 가져옵니다.
 
 ## 사용 예시
 
-### ProcedureComponent 개요
+### 1. 프로시저 클래스 정의
 
-`ProcedureComponent`는 Unity와 Game Framework 기반 게임에서 게임 흐름을 관리하는 컴포넌트입니다. `FSMComponent`(유한 상태 기계 컴포넌트)에 의존하여 게임의 시작, 메뉴, 게임플레이, 일시 정지, 종료 등 다양한 단계나 상태를 관리합니다.
+```csharp
+public class ProcedurePreload : ProcedureBase
+{
+    protected internal override void OnEnter(IFsm<IProcedureManager> procedureOwner)
+    {
+        // 에셋, 설정 등 로드
+    }
 
-### 기능
+    protected internal override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds, float realElapseSeconds)
+    {
+        // 로딩 진행률 확인, 완료 시 다음 프로시저로 전환
+        ChangeToState<ProcedureMain>(procedureOwner);
+    }
+}
 
-- 프로시저 매니저(`IProcedureManager`)를 초기화하고, `GameFrameworkEntry`를 통해 관련 모듈을 등록 및 가져옵니다.
-- 게임 시작 시 모든 사용 가능한 프로시저(`ProcedureBase` 타입 배열)를 생성하고 초기화합니다.
-- 게임 시작 시 진입 프로시저(`m_EntranceProcedure`)로 자동 전환합니다.
-- 현재 프로시저와 그 지속 시간을 쿼리하고 가져오는 메서드를 제공합니다.
+public class ProcedureMain : ProcedureBase
+{
+    protected internal override void OnEnter(IFsm<IProcedureManager> procedureOwner)
+    {
+        // 메인 메뉴 표시
+    }
+}
+```
 
-### 종속성
+### 2. Inspector로 설정
 
-`ProcedureComponent`는 다음 컴포넌트나 모듈이 필요합니다:
+1. 게임 오브젝트에 `ProcedureComponent`를 추가합니다 (`GameFrameX > Procedure`).
+2. Inspector에서 사용 가능한 프로시저를 선택합니다.
+3. 진입 프로시저를 선택합니다 (예: `ProcedurePreload`).
 
-- `FSMComponent`: 프로시저의 유한 상태 기계 로직을 구현하는 데 사용.
-- `IProcedureManager`: Game Framework에서 제공하는 게임 프로시저 상태 관리 인터페이스.
-- `ProcedureBase`: 사용자 정의 프로시저를 확장하기 위한 기본 클래스.
+### 3. 런타임 프로시저 관리
 
-### 설정
+```csharp
+// 프로시저 존재 여부 확인
+bool has = procedureComponent.HasProcedure<ProcedureMain>();
 
-Unity Inspector에서 다음 속성을 설정할 수 있습니다:
+// 프로시저 인스턴스 가져오기
+ProcedureMain main = procedureComponent.GetProcedure<ProcedureMain>();
 
-- `m_AvailableProcedureTypeNames`: 사용 가능한 프로시저 타입 이름 배열. 게임 시작 시 프로시저를 생성하고 초기화하는 데 사용.
-- `m_EntranceProcedureTypeName`: 게임 시작 시 처음으로 진입하는 프로시저의 타입 이름.
+// 현재 프로시저 정보 가져오기
+ProcedureBase current = procedureComponent.CurrentProcedure;
+float time = procedureComponent.CurrentProcedureTime;
 
-### 공개 메서드
-
-- `HasProcedure<T>()`: 지정된 타입의 프로시저가 존재하는지 확인합니다.
-- `GetProcedure<T>()`: 지정된 타입의 프로시저를 가져옵니다.
+// 모든 프로시저를 파괴하고 새 프로시저로 재초기화
+procedureComponent.DestroyProcedures();
+procedureComponent.ReinitializeProcedures(newProcedures, entranceProcedure);
+```
 
 ## 변경 로그
 
@@ -87,4 +133,4 @@ Unity Inspector에서 다음 속성을 설정할 수 있습니다:
 
 ## 라이선스
 
-이 프로젝트는 MIT 라이선스에 따라 배포됩니다. 자세한 내용은 [LICENSE.md](LICENSE.md) 파일을 참조하세요.
+이 프로젝트는 MIT 라이선스에 따라 배포됩니다 - 자세한 내용은 [LICENSE.md](LICENSE.md) 파일을 참조하세요.

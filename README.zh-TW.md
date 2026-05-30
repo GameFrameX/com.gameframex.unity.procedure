@@ -12,7 +12,6 @@
 
 [文檔](https://gameframex.doc.alianblank.com) · [快速開始](#快速開始) · [QQ群](https://qm.qq.com/q/5U9Fvebw) · [語言](#語言)
 
-
 </div>
 
 ---
@@ -25,61 +24,108 @@
 
 ## 項目簡介
 
-GameFrameX 的 Procedure 流程管理組件。
+基於有限狀態機（FSM）的 Unity 遊戲流程管理套件。透過可切換的流程狀態驅動遊戲生命週期階段（閃屏、預載入、登入、主選單等）。
 
-**Procedure 流程管理組件 (Procedure Component)** - 提供流程管理組件相關的介面。
+## 架構概覽
 
-**此套件主要服務於 `https://github.com/AlianBlank/GameFrameX.Unity` 作為子套件使用。**
+```
+ProcedureComponent (MonoBehaviour)
+  └─ IProcedureManager (介面)
+       └─ ProcedureManager (管理 FSM)
+            └─ ProcedureBase (抽象類別，每個流程的邏輯)
+```
 
-## 依賴組件
+- **ProcedureComponent** — Unity 元件，透過 Inspector 註冊流程和入口流程，`Start()` 時自動啟動。
+- **ProcedureManager** — 核心管理器，透過 `IFsmManager` 建立內部 FSM 驅動流程狀態切換。
+- **ProcedureBase** — 抽象基底類別，提供生命週期回呼：`OnInit`、`OnEnter`、`OnUpdate`、`OnFixedUpdate`、`OnLeave`、`OnDestroy`。
 
-- 有限狀態機：https://github.com/AlianBlank/com.alianblank.gameframex.unity.fsm
+## 依賴
+
+- [com.gameframex.unity.fsm](https://github.com/GameFrameX/com.gameframex.unity.fsm) — 有限狀態機
 
 ## 快速開始
 
-### 使用方式（任選其一）
+### 安裝
 
-1. 直接在 `manifest.json` 的檔案中的 `dependencies` 節點下新增以下內容
-   ```json
-   {"com.gameframex.unity.procedure": "https://github.com/AlianBlank/com.gameframex.unity.procedure.git"}
-   ```
+編輯 Unity 專案的 `Packages/manifest.json`，添加 `scopedRegistries` 部分：
 
-2. 在 Unity 的 `Packages Manager` 中使用 `Git URL` 的方式新增套件，地址為：https://github.com/AlianBlank/com.gameframex.unity.procedure.git
+```json
+{
+  "scopedRegistries": [
+    {
+      "name": "GameFrameX",
+      "url": "https://gameframex.upm.alianblank.uk",
+      "scopes": [
+        "com.gameframex"
+      ]
+    }
+  ]
+}
+```
 
-3. 直接下載倉庫放置到 Unity 專案的 `Packages` 目錄下。會自動載入識別。
+然後在 `dependencies` 中添加：
+
+```json
+{
+  "dependencies": {
+    "com.gameframex.unity.procedure": "1.1.1"
+  }
+}
+```
+
+`scopes` 控制哪些套件透過此註冊表解析。只有以 `com.gameframex` 開頭的套件才會從這個註冊表取得。
 
 ## 使用範例
 
-### ProcedureComponent 簡介
+### 1. 定義流程類別
 
-`ProcedureComponent` 類是一款用於在基於 Unity 和 Game Framework 框架開發的遊戲中管理遊戲流程的組件。它依賴於 `FSMComponent`（有限狀態機組件）來管理遊戲中的不同階段或狀態，例如啟動、選單、遊戲、暫停和結束等。
+```csharp
+public class ProcedurePreload : ProcedureBase
+{
+    protected internal override void OnEnter(IFsm<IProcedureManager> procedureOwner)
+    {
+        // 載入資源、設定等
+    }
 
-### 功能
+    protected internal override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds, float realElapseSeconds)
+    {
+        // 檢查載入進度，完成後切換到下一個流程
+        ChangeToState<ProcedureMain>(procedureOwner);
+    }
+}
 
-- 初始化流程管理器 (`IProcedureManager`)，透過 `GameFrameworkEntry` 註冊並取得相關模組。
-- 在遊戲啟動時建立並初始化所有可用的流程 (`ProcedureBase` 類型陣列)。
-- 啟動遊戲時，自動切換至入口流程 (`m_EntranceProcedure`)。
-- 提供方法查詢、取得當前流程及其持續時間。
+public class ProcedureMain : ProcedureBase
+{
+    protected internal override void OnEnter(IFsm<IProcedureManager> procedureOwner)
+    {
+        // 顯示主選單
+    }
+}
+```
 
-### 依賴關係
+### 2. 透過 Inspector 設定
 
-`ProcedureComponent` 需要以下組件或模組才能正常運作：
+1. 將 `ProcedureComponent` 添加到遊戲物件（透過 `GameFrameX > Procedure`）。
+2. 在 Inspector 中勾選可用的流程。
+3. 選擇入口流程（如 `ProcedurePreload`）。
 
-- `FSMComponent`：用於實作流程的有限狀態機邏輯。
-- `IProcedureManager`：一個介面，由 Game Framework 提供，管理遊戲的流程狀態。
-- `ProcedureBase`：用於擴充自訂具體流程的基礎類別。
+### 3. 執行時流程管理
 
-### 設定
+```csharp
+// 檢查流程是否存在
+bool has = procedureComponent.HasProcedure<ProcedureMain>();
 
-在 Unity Inspector 中，您可以設定以下屬性：
+// 取得流程實例
+ProcedureMain main = procedureComponent.GetProcedure<ProcedureMain>();
 
-- `m_AvailableProcedureTypeNames`：可用流程的類型名稱陣列，用於在啟動遊戲時建立和初始化流程。
-- `m_EntranceProcedureTypeName`：啟動遊戲時首先進入的流程的類型名稱。
+// 取得當前流程資訊
+ProcedureBase current = procedureComponent.CurrentProcedure;
+float time = procedureComponent.CurrentProcedureTime;
 
-### 公共方法
-
-- `HasProcedure<T>()`：檢查是否存在指定類型的流程。
-- `GetProcedure<T>()`：取得指定類型的流程。
+// 銷毀所有流程並使用新流程重新初始化
+procedureComponent.DestroyProcedures();
+procedureComponent.ReinitializeProcedures(newProcedures, entranceProcedure);
+```
 
 ## 更新日誌
 
@@ -87,4 +133,4 @@ GameFrameX 的 Procedure 流程管理組件。
 
 ## 開源協議
 
-本專案基於 MIT 協議開源，詳見 [LICENSE.md](LICENSE.md) 檔案。
+本專案基於 MIT 協議開源 - 詳見 [LICENSE.md](LICENSE.md) 檔案。
