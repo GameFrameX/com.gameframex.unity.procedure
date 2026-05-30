@@ -71,5 +71,16 @@ namespace GameFrameX.Procedure.Runtime
         /// <param name="procedureType">要获取的流程类型。</param>
         /// <returns>要获取的流程。</returns>
         ProcedureBase GetProcedure(Type procedureType);
+
+        /// <summary>
+        /// 销毁当前流程状态机，清空所有已注册的流程。
+        /// </summary>
+        void DestroyProcedures();
+
+        /// <summary>
+        /// 销毁当前流程状态机，并使用新的流程重新初始化。
+        /// </summary>
+        /// <param name="procedures">新注册的流程。</param>
+        void ReinitializeProcedures(params ProcedureBase[] procedures);
     }
 }
