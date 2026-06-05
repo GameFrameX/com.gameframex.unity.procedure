@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.2.1...1.2.2) (2026-06-05)
+
+
+### Bug Fixes
+
+* **procedure:** 修复 Inspector 在流程未初始化时访问 CurrentProcedure 异常 ([516177f](https://github.com/gameframex/com.gameframex.unity.procedure/commit/516177f9b00405b1e8f2442db390c4f985258dfb))
+
 ## [1.2.1](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.2.0...1.2.1) (2026-05-30)
 
 
