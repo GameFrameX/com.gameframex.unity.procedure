@@ -60,7 +60,17 @@ namespace GameFrameX.Procedure.Editor
             }
             else if (EditorApplication.isPlaying)
             {
-                EditorGUILayout.LabelField("Current Procedure", t.CurrentProcedure == null ? "None" : t.CurrentProcedure.GetType().ToString());
+                string currentProcedureName;
+                try
+                {
+                    currentProcedureName = t.CurrentProcedure != null ? t.CurrentProcedure.GetType().ToString() : "None";
+                }
+                catch
+                {
+                    currentProcedureName = "Not initialized";
+                }
+
+                EditorGUILayout.LabelField("Current Procedure", currentProcedureName);
             }
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
