@@ -136,6 +136,14 @@ procedureComponent.ReinitializeProcedures(newProcedures, entranceProcedure);
 
 See [CHANGELOG.md](CHANGELOG.md) for details.
 
+
+## Documentation & Resources
+
+- [Documentation](https://gameframex.doc.alianblank.com)
+
+## Community & Support
+
+- QQ Group: 467608841 / 233840761
 ## License
 
 See [LICENSE.md](LICENSE.md) for license information.

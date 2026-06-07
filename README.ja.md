@@ -136,6 +136,14 @@ procedureComponent.ReinitializeProcedures(newProcedures, entranceProcedure);
 
 詳細は [CHANGELOG.md](CHANGELOG.md) をご覧ください。
 
+
+## ドキュメントとリソース
+
+- [ドキュメント](https://gameframex.doc.alianblank.com)
+
+## コミュニティとサポート
+
+- QQグループ: 467608841 / 233840761
 ## ライセンス
 
 詳しくは [LICENSE.md](LICENSE.md) をご参照ください。
