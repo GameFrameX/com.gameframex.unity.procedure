@@ -41,6 +41,7 @@ namespace GameFrameX.Procedure.Editor
     {
         private SerializedProperty m_AvailableProcedureTypeNames = null;
         private SerializedProperty m_EntranceProcedureTypeName = null;
+        private SerializedProperty m_UseStartupRunner = null;
 
         private string[] m_ProcedureTypeNames = null;
         private List<string> m_CurrentAvailableProcedureTypeNames = null;
@@ -51,6 +52,15 @@ namespace GameFrameX.Procedure.Editor
             base.OnInspectorGUI();
 
             serializedObject.Update();
+
+            EditorGUILayout.PropertyField(m_UseStartupRunner, new GUIContent("Use Startup Runner", "勾选后，流程由 ApplicationStartupEntry + StartupRunner.Run 接管，本组件仅注册 IProcedureManager，下面的 Available Procedures 配置不生效。"));
+            if (m_UseStartupRunner.boolValue)
+            {
+                EditorGUILayout.HelpBox("流程启动已委托给 StartupRunner.Run。Available Procedures 与 Entrance Procedure 配置将被忽略。", MessageType.Info);
+                serializedObject.ApplyModifiedProperties();
+                Repaint();
+                return;
+            }
 
             ProcedureComponent t = (ProcedureComponent)target;
 
@@ -139,6 +149,7 @@ namespace GameFrameX.Procedure.Editor
         {
             m_AvailableProcedureTypeNames = serializedObject.FindProperty("m_AvailableProcedureTypeNames");
             m_EntranceProcedureTypeName = serializedObject.FindProperty("m_EntranceProcedureTypeName");
+            m_UseStartupRunner = serializedObject.FindProperty("m_UseStartupRunner");
 
             _RefreshTypeNames();
         }
