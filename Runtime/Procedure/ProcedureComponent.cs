@@ -52,6 +52,18 @@ namespace GameFrameX.Procedure.Runtime
         [SerializeField] private string m_EntranceProcedureTypeName = null;
 
         /// <summary>
+        /// 是否使用 StartupRunner 接管启动流程。
+        /// </summary>
+        /// <remarks>
+        /// 为 true 时，本组件仅在 Awake 中注册 IProcedureManager，
+        /// 不调用 Initialize 和 StartProcedure；由 ApplicationStartupEntry 通过
+        /// StartupRunner.Run 接管整个流程的初始化与启动。
+        /// 为 false 时（默认），使用 Inspector 配置的 m_AvailableProcedureTypeNames
+        /// 启动流程（旧行为）。
+        /// </remarks>
+        [SerializeField] private bool m_UseStartupRunner = false;
+
+        /// <summary>
         /// 获取当前流程。
         /// </summary>
         [Preserve]
@@ -96,6 +108,13 @@ namespace GameFrameX.Procedure.Runtime
 
         private IEnumerator Start()
         {
+            if (m_UseStartupRunner)
+            {
+                // 由 ApplicationStartupEntry + StartupRunner.Run 接管 Initialize 和 StartProcedure，
+                // 本组件仅承担 Awake 注册 IProcedureManager 的职责，避免与新入口重复 Initialize 报 Already exist FSM。
+                yield break;
+            }
+
             if (m_AvailableProcedureTypeNames == null || m_AvailableProcedureTypeNames.Length <= 0)
             {
                 Log.Error("Available procedure type names is invalid.");
