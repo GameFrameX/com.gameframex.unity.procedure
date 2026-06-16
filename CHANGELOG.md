@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.2.3...1.3.0) (2026-06-16)
+
+
+### Features
+
+* **editor:** 添加 UseStartupRunner Inspector 配置 UI ([b1d1645](https://github.com/gameframex/com.gameframex.unity.procedure/commit/b1d164555a458e9679ebf220b5854c03d6c6308d))
+* **runtime:** 添加 UseStartupRunner 运行时支持 ([59ddbc1](https://github.com/gameframex/com.gameframex.unity.procedure/commit/59ddbc147176361a4247342ec12dad02923f0849))
+
 ## [1.2.3](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.2.2...1.2.3) (2026-06-07)
 
 
