@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.3.0...1.4.0) (2026-07-03)
+
+
+### Features
+
+* **runtime:** 区分编辑器手动添加与运行时自动添加的 ProcedureComponent 行为 ([d0de28e](https://github.com/gameframex/com.gameframex.unity.procedure/commit/d0de28e82b651cd8ae1f43fa228cc3003ded2a10))
+
 # [1.3.0](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.2.3...1.3.0) (2026-06-16)
 
 
