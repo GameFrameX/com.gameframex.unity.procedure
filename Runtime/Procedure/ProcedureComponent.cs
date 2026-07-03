@@ -42,6 +42,7 @@ namespace GameFrameX.Procedure.Runtime
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("GameFrameX/Procedure")]
+    [GameFrameXAutoComponent(-1000)]
     public sealed class ProcedureComponent : GameFrameworkComponent
     {
         private IProcedureManager m_ProcedureManager = null;
@@ -98,6 +99,11 @@ namespace GameFrameX.Procedure.Runtime
             ImplementationComponentType = Utility.Assembly.GetType(componentType);
             InterfaceComponentType = typeof(IProcedureManager);
             base.Awake();
+            if (!IsRuntimeComponentReady)
+            {
+                return;
+            }
+
             m_ProcedureManager = GameFrameworkEntry.GetModule<IProcedureManager>();
             if (m_ProcedureManager == null)
             {
@@ -108,6 +114,11 @@ namespace GameFrameX.Procedure.Runtime
 
         private IEnumerator Start()
         {
+            if (m_ProcedureManager == null)
+            {
+                yield break;
+            }
+
             if (m_UseStartupRunner)
             {
                 // 由 ApplicationStartupEntry + StartupRunner.Run 接管 Initialize 和 StartProcedure，
@@ -117,7 +128,7 @@ namespace GameFrameX.Procedure.Runtime
 
             if (m_AvailableProcedureTypeNames == null || m_AvailableProcedureTypeNames.Length <= 0)
             {
-                Log.Error("Available procedure type names is invalid.");
+                Log.Warning("Available procedure type names is empty. Procedure auto start skipped.");
                 yield break;
             }
 
