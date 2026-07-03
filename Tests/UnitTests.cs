@@ -1,8 +1,10 @@
 using System;
+using System.Reflection;
 using GameFrameX.Fsm.Runtime;
 using GameFrameX.Procedure.Runtime;
 using GameFrameX.Runtime;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace GameFrameX.Procedure.Tests
 {
@@ -226,5 +228,54 @@ namespace GameFrameX.Procedure.Tests
         }
 
         #endregion
+    }
+
+    [TestFixture]
+    internal class ProcedureComponentStartupRunnerTests
+    {
+        [Test]
+        public void UseStartupRunner_DefaultIsFalse()
+        {
+            GameFrameXRuntimeHost.Reset();
+            GameEntry.Shutdown(ShutdownType.None);
+            var gameObject = new GameObject("ProcedureComponentStartupRunnerTests");
+            try
+            {
+                var component = gameObject.AddComponent<ProcedureComponent>();
+
+                Assert.IsFalse(GetUseStartupRunner(component));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(gameObject);
+                GameEntry.Shutdown(ShutdownType.None);
+                GameFrameXRuntimeHost.Reset();
+            }
+        }
+
+        [Test]
+        public void RuntimeOverrideProvider_EnablesUseStartupRunnerForAutoRuntime()
+        {
+            var providerType = typeof(ProcedureComponent).Assembly.GetType(
+                "GameFrameX.Procedure.Runtime.ProcedureRuntimeOverrideProvider",
+                true);
+            var provider = (IGameFrameXRuntimeOverrideProvider)Activator.CreateInstance(providerType, true);
+            var context = new GameFrameXRuntimeOverrideContext();
+
+            provider.CollectOverrides(context);
+
+            Assert.IsTrue(context.GetOrCreateComponentConfig(typeof(ProcedureComponent))
+                .TryGetValue("m_UseStartupRunner", out var value));
+            Assert.AreEqual(true, value);
+        }
+
+        private static bool GetUseStartupRunner(ProcedureComponent component)
+        {
+            var field = typeof(ProcedureComponent).GetField(
+                "m_UseStartupRunner",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(field);
+            return (bool)field.GetValue(component);
+        }
     }
 }
