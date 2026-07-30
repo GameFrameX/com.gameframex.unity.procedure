@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.4.0...1.4.1) (2026-07-30)
+
+
+### Bug Fixes
+
+* **dependencies:** 更新 com.gameframex.unity.fsm 依赖版本至 1.2.0 ([2ceadeb](https://github.com/gameframex/com.gameframex.unity.procedure/commit/2ceadebcd95dd3015136ba7ec29d4a3820348e79))
+
 # [1.4.0](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.3.0...1.4.0) (2026-07-03)
 
 
