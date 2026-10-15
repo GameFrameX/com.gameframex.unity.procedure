@@ -253,21 +253,6 @@ namespace GameFrameX.Procedure.Tests
             }
         }
 
-        [Test]
-        public void RuntimeOverrideProvider_EnablesUseStartupRunnerForAutoRuntime()
-        {
-            var providerType = typeof(ProcedureComponent).Assembly.GetType(
-                "GameFrameX.Procedure.Runtime.ProcedureRuntimeOverrideProvider",
-                true);
-            var provider = (IGameFrameXRuntimeOverrideProvider)Activator.CreateInstance(providerType, true);
-            var context = new GameFrameXRuntimeOverrideContext();
-
-            provider.CollectOverrides(context);
-
-            Assert.IsTrue(context.GetOrCreateComponentConfig(typeof(ProcedureComponent))
-                .TryGetValue("m_UseStartupRunner", out var value));
-            Assert.AreEqual(true, value);
-        }
 
         private static bool GetUseStartupRunner(ProcedureComponent component)
         {
@@ -276,6 +261,34 @@ namespace GameFrameX.Procedure.Tests
                 BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.IsNotNull(field);
             return (bool)field.GetValue(component);
+        }
+    }
+
+    [TestFixture]
+    internal class ProcedureOptionsTests
+    {
+        [TearDown]
+        public void TearDown()
+        {
+            GameFrameXOptions.Reset();
+        }
+
+        [Test]
+        public void ProcedureOptions_ConfigureAndTryGet_RoundTripsDifferentialValues()
+        {
+            GameFrameXOptions.Reset();
+            GameFrameXOptions.Configure(new ProcedureOptions
+            {
+                EntranceProcedureTypeName = "GameFrameX.Procedure.Tests.ProcedureMain",
+                UseStartupRunner = true,
+            });
+
+            // 组件 Awake 路径依赖运行时 Host，退化为直接验证注册表消费语义（TryGet 即组件 Awake 的读取入口）
+            bool hit = GameFrameXOptions.TryGet<ProcedureOptions>(out var procedureOptions);
+
+            Assert.IsTrue(hit, "Configure 后 TryGet 应命中");
+            Assert.That(procedureOptions.EntranceProcedureTypeName, Is.EqualTo("GameFrameX.Procedure.Tests.ProcedureMain"));
+            Assert.IsTrue(procedureOptions.UseStartupRunner);
         }
     }
 }

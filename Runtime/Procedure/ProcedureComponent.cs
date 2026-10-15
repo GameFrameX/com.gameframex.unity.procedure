@@ -33,7 +33,6 @@ using System.Collections;
 using GameFrameX.Fsm.Runtime;
 using GameFrameX.Runtime;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace GameFrameX.Procedure.Runtime
 {
@@ -50,7 +49,7 @@ namespace GameFrameX.Procedure.Runtime
 
         [SerializeField] private string[] m_AvailableProcedureTypeNames = null;
 
-        [SerializeField] private string m_EntranceProcedureTypeName = null;
+        private string m_EntranceProcedureTypeName = null;
 
         /// <summary>
         /// 是否使用 StartupRunner 接管启动流程。
@@ -62,12 +61,12 @@ namespace GameFrameX.Procedure.Runtime
         /// 为 false 时（默认），使用 Inspector 配置的 m_AvailableProcedureTypeNames
         /// 启动流程（旧行为）。
         /// </remarks>
-        [SerializeField] private bool m_UseStartupRunner = false;
+        private bool m_UseStartupRunner = false;
 
         /// <summary>
         /// 获取当前流程。
         /// </summary>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         public IProcedureManager Procedure
         {
             get { return m_ProcedureManager; }
@@ -76,7 +75,7 @@ namespace GameFrameX.Procedure.Runtime
         /// <summary>
         /// 获取当前流程。
         /// </summary>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         public ProcedureBase CurrentProcedure
         {
             get { return m_ProcedureManager.CurrentProcedure; }
@@ -85,7 +84,7 @@ namespace GameFrameX.Procedure.Runtime
         /// <summary>
         /// 获取当前流程持续时间。
         /// </summary>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         public float CurrentProcedureTime
         {
             get { return m_ProcedureManager.CurrentProcedureTime; }
@@ -109,6 +108,12 @@ namespace GameFrameX.Procedure.Runtime
             {
                 Log.Fatal("Procedure manager is invalid.");
                 return;
+            }
+
+            if (GameFrameXOptions.TryGet<ProcedureOptions>(out var procedureOptions))
+            {
+                m_EntranceProcedureTypeName = procedureOptions.EntranceProcedureTypeName;
+                m_UseStartupRunner = procedureOptions.UseStartupRunner;
             }
         }
 
@@ -173,7 +178,7 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         /// <typeparam name="T">要检查的流程类型。</typeparam>
         /// <returns>是否存在流程。</returns>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         public bool HasProcedure<T>() where T : ProcedureBase
         {
             return m_ProcedureManager.HasProcedure<T>();
@@ -184,7 +189,7 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         /// <param name="procedureType">要检查的流程类型。</param>
         /// <returns>是否存在流程。</returns>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         public bool HasProcedure(Type procedureType)
         {
             return m_ProcedureManager.HasProcedure(procedureType);
@@ -195,7 +200,7 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         /// <typeparam name="T">要获取的流程类型。</typeparam>
         /// <returns>要获取的流程。</returns>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         public ProcedureBase GetProcedure<T>() where T : ProcedureBase
         {
             return m_ProcedureManager.GetProcedure<T>();
@@ -206,7 +211,7 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         /// <param name="procedureType">要获取的流程类型。</param>
         /// <returns>要获取的流程。</returns>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         public ProcedureBase GetProcedure(Type procedureType)
         {
             return m_ProcedureManager.GetProcedure(procedureType);
@@ -215,7 +220,7 @@ namespace GameFrameX.Procedure.Runtime
         /// <summary>
         /// 销毁当前流程状态机，清空所有已注册的流程。
         /// </summary>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         public void DestroyProcedures()
         {
             m_ProcedureManager.DestroyProcedures();
@@ -226,7 +231,7 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         /// <param name="procedures">新注册的流程。</param>
         /// <param name="entranceProcedure">入口流程。</param>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         public void ReinitializeProcedures(ProcedureBase[] procedures, ProcedureBase entranceProcedure)
         {
             m_ProcedureManager.ReinitializeProcedures(procedures);

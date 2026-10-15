@@ -29,7 +29,6 @@
 
 using System;
 using GameFrameX.Fsm.Runtime;
-using UnityEngine.Scripting;
 
 namespace GameFrameX.Procedure.Runtime
 {
@@ -41,13 +40,13 @@ namespace GameFrameX.Procedure.Runtime
         /// <summary>
         /// 获取当前流程。
         /// </summary>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         ProcedureBase CurrentProcedure { get; }
 
         /// <summary>
         /// 获取当前流程持续时间。
         /// </summary>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         float CurrentProcedureTime { get; }
 
         /// <summary>
@@ -55,21 +54,21 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         /// <param name="fsmManager">有限状态机管理器。</param>
         /// <param name="procedures">流程管理器包含的流程。</param>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         void Initialize(IFsmManager fsmManager, params ProcedureBase[] procedures);
 
         /// <summary>
         /// 开始流程。
         /// </summary>
         /// <typeparam name="T">要开始的流程类型。</typeparam>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         void StartProcedure<T>() where T : ProcedureBase;
 
         /// <summary>
         /// 开始流程。
         /// </summary>
         /// <param name="procedureType">要开始的流程类型。</param>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         void StartProcedure(Type procedureType);
 
         /// <summary>
@@ -77,7 +76,7 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         /// <typeparam name="T">要检查的流程类型。</typeparam>
         /// <returns>是否存在流程。</returns>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         bool HasProcedure<T>() where T : ProcedureBase;
 
         /// <summary>
@@ -85,7 +84,7 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         /// <param name="procedureType">要检查的流程类型。</param>
         /// <returns>是否存在流程。</returns>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         bool HasProcedure(Type procedureType);
 
         /// <summary>
@@ -93,7 +92,7 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         /// <typeparam name="T">要获取的流程类型。</typeparam>
         /// <returns>要获取的流程。</returns>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         ProcedureBase GetProcedure<T>() where T : ProcedureBase;
 
         /// <summary>
@@ -101,20 +100,20 @@ namespace GameFrameX.Procedure.Runtime
         /// </summary>
         /// <param name="procedureType">要获取的流程类型。</param>
         /// <returns>要获取的流程。</returns>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         ProcedureBase GetProcedure(Type procedureType);
 
         /// <summary>
         /// 销毁当前流程状态机，清空所有已注册的流程。
         /// </summary>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         void DestroyProcedures();
 
         /// <summary>
         /// 销毁当前流程状态机，并使用新的流程重新初始化。
         /// </summary>
         /// <param name="procedures">新注册的流程。</param>
-        [Preserve]
+        [UnityEngine.Scripting.Preserve]
         void ReinitializeProcedures(params ProcedureBase[] procedures);
     }
 }
