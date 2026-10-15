@@ -1,3 +1,13 @@
+# [2.0.0](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.4.1...2.0.0) (2026-10-15)
+
+
+* feat(module)!: 流程模块薄入口化并新增 ProcedureOptions ([ee0246c](https://github.com/gameframex/com.gameframex.unity.procedure/commit/ee0246cb67cff78714489f61ed141c691831e05e))
+
+
+### BREAKING CHANGES
+
+* 组件序列化字段移除；ProcedureRuntimeOverrideProvider 删除，改经 ProcedureOptions 配置。
+
 ## [Unreleased]
 
 ### ⚠ BREAKING CHANGES
