@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/gameframex/com.gameframex.unity.procedure/compare/2.0.0...2.0.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* **procedure:** 添加完整 link.xml 防代码裁剪保护 ([ce3ff15](https://github.com/gameframex/com.gameframex.unity.procedure/commit/ce3ff15131830e3b971ddafafe978a3c48989898))
+
 # [2.0.0](https://github.com/gameframex/com.gameframex.unity.procedure/compare/1.4.1...2.0.0) (2026-10-15)
 
 
